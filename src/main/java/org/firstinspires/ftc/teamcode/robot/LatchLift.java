@@ -5,4 +5,9 @@ package org.firstinspires.ftc.teamcode.robot;
  * lol lets get it
  */
 public class LatchLift {
+    private Robot robot = null;
+
+    public LatchLift(Robot inRobot){
+        robot = inRobot;
+    }
 }

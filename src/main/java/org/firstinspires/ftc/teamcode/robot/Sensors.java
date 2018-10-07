@@ -5,4 +5,9 @@ package org.firstinspires.ftc.teamcode.robot;
  * lol lets get it
  */
 public class Sensors {
+    private Robot robot = null;
+
+    public Sensors(Robot inRobot){
+        robot = inRobot;
+    }
 }
