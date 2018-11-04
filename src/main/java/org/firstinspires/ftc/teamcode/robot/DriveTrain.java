@@ -17,7 +17,7 @@ public class DriveTrain {
 
     public static final int PULSES_PER_MTR_ROTATION = 1120;
     public static final double INCHES_PER_WHEEL_ROTATION = 12.566;
-    public static final double GEAR_RATIO = 0.9; // Motor to Wheel
+    public static final double GEAR_RATIO = 0.769; // Motor to Wheel
     private static final boolean INVERT_DIRECTION_SIGN = true;
 
     public DriveTrain(Robot inRobot){
@@ -26,8 +26,8 @@ public class DriveTrain {
         leftDrive = robot.hardwareMap.get(DcMotor.class,"left_drive");
         rightDrive = robot.hardwareMap.get(DcMotor.class, "right_drive");
 
-        leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void driveForwardEncoder(double distance, double power, double timeoutSec) {
