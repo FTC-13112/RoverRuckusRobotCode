@@ -1,8 +1,14 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 /**
  * Created by Dravid-C on 10/7/2018.
@@ -20,6 +26,10 @@ public class DriveTrain {
     public static final double GEAR_RATIO = 0.769; // Motor to Wheel
     private static final boolean INVERT_DIRECTION_SIGN = true;
 
+    private static final double GYRO_TURN_KP = 19.0 / 1000.0;
+    private static final double GYRO_TURN_KI = 1.1 / 1000.0;
+    private static final double GYRO_TURN_KD = 1.8 / 1000.0;
+
     public DriveTrain(Robot inRobot){
         robot = inRobot;
 
@@ -29,6 +39,50 @@ public class DriveTrain {
         leftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         rightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
     }
+    public void gyroTurnKavin (double targetAngle, double timeoutSec) {
+        BNO055IMU imu = robot.sensors.imu;
+        runtime.reset();
+
+        float startingHeading = getHeading(imu);
+        double currentAngle = 0;
+        double prevError = 0;
+        double error = 0;
+        double lastTime = runtime.seconds();
+        double currTime = lastTime;
+        double proportional = 0;
+        double integral = 0;
+        double derivative = 0;
+
+        double bounded_power = 0;
+
+        while((robot.isRunningAutonomous() && robot.currentOpMode.opModeIsActive())
+                && runtime.seconds() < timeoutSec
+                && !robot.valueInRange(targetAngle, 0.05, currentAngle)) {
+
+            currTime = runtime.seconds();
+            currentAngle = getHeading(imu) - startingHeading;
+            error = targetAngle - currentAngle;
+
+            proportional = GYRO_TURN_KP * error;
+            integral += GYRO_TURN_KI * (error *  (currTime - lastTime));
+            derivative = GYRO_TURN_KD * (error - prevError) / (currTime - lastTime);
+
+            bounded_power = robot.boundValue(0.7, -0.7, proportional + integral + derivative);
+
+            leftDrive.setPower(bounded_power);
+            rightDrive.setPower(-bounded_power);
+        }
+
+        leftDrive.setPower(0);
+        rightDrive.setPower(0);
+    }
+
+    private float getHeading(BNO055IMU imu) {
+        Orientation angles = robot.sensors.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        float unnormalized = AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle);
+        return AngleUnit.DEGREES.normalize(unnormalized);
+    }
+
 
     public void driveForwardEncoder(double distance, double power, double timeoutSec) {
         double numMtrRotations = distance / (INCHES_PER_WHEEL_ROTATION * GEAR_RATIO);
