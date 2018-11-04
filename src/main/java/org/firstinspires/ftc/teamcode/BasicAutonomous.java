@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 
 /**
  * Created by Dravid-C on 10/7/2018.
- * lol lets get it
+ *
  */
 @Autonomous(name="Basic Autonomous", group="Testing")
 public class BasicAutonomous extends LinearOpMode {
@@ -17,8 +17,11 @@ public class BasicAutonomous extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new Robot(this, hardwareMap, telemetry);
+        robot.output.holdMarker();
+
         waitForStart();
-        robot.driveTrain.driveForwardEncoder(20.0, 0.25, 5.0);
-        robot.driveTrain.driveBackwardEncoder(30.0, 0.25, 10.0);
+        robot.driveTrain.driveForwardEncoder(48.0, 0.5, 10.0);
+        robot.output.dropMarker();
+        robot.output.holdMarker();
     }
 }
