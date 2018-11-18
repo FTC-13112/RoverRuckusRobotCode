@@ -23,13 +23,13 @@ public class DriveTrain {
 
     public static final int PULSES_PER_MTR_ROTATION = 1120;
     public static final double INCHES_PER_WHEEL_ROTATION = 12.566;
-    public static final double GEAR_RATIO = 0.769; // Motor to Wheel
+    public static final double GEAR_RATIO = 1.0; // Motor to Wheel
     private static final boolean INVERT_DIRECTION_SIGN = true;
 
-    private static final double GYRO_TURN_KP = 19.0 / 1000.0;
-    private static final double GYRO_TURN_KI = 1.1 / 1000.0;
-    private static final double GYRO_TURN_KD = 1.8 / 1000.0;
-
+    private static final double GYRO_TURN_KP = 12.5 / 1000.0;
+    private static final double GYRO_TURN_KI = 0.35 / 1000.0;
+    private static final double GYRO_TURN_KD = 0.0 / 1000.0;
+//kp = 7.0, ki = 0.3, kd =0.5
     public DriveTrain(Robot inRobot){
         robot = inRobot;
 
@@ -55,9 +55,11 @@ public class DriveTrain {
 
         double bounded_power = 0;
 
+        ActiveTimeout inRangeConfirm = new ActiveTimeout(0.25);
+
         while((robot.isRunningAutonomous() && robot.currentOpMode.opModeIsActive())
                 && runtime.seconds() < timeoutSec
-                && !robot.valueInRange(targetAngle, 0.05, currentAngle)) {
+                && !inRangeConfirm.checkValid(robot.valueInRange(targetAngle, 0.5, currentAngle))) {
 
             currTime = runtime.seconds();
             currentAngle = getHeading(imu) - startingHeading;
@@ -67,7 +69,7 @@ public class DriveTrain {
             integral += GYRO_TURN_KI * (error *  (currTime - lastTime));
             derivative = GYRO_TURN_KD * (error - prevError) / (currTime - lastTime);
 
-            bounded_power = robot.boundValue(0.7, -0.7, proportional + integral + derivative);
+            bounded_power = robot.boundValue(0.5, -0.5, proportional + integral + derivative);
 
             leftDrive.setPower(bounded_power);
             rightDrive.setPower(-bounded_power);
