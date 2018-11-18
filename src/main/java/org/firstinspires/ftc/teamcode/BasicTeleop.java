@@ -26,13 +26,13 @@ public class BasicTeleop extends OpMode {
     public void loop() {
 
         //For Intake Motor
-        if (gamepad1.left_bumper) {
+        if (gamepad2.left_bumper) {
             robot.intake.infeed();
 
-        } else if (gamepad1.right_bumper) {
+        } else if (gamepad2.right_bumper) {
             robot.intake.outfeed();
 
-        } else if (gamepad1.b){
+        } else if (gamepad2.b){
             robot.intake.stopIntake();
         }
 
@@ -41,10 +41,12 @@ public class BasicTeleop extends OpMode {
         robot.driveTrain.rightDrive.setPower(gamepad1.right_stick_y);
 
         //For Lift motors
-        if(gamepad1.left_trigger > 0.5) {
-            robot.latchLift.liftMotor.setPower(1.0);
-        } else if (gamepad1.right_trigger > 0.5){
-            robot.latchLift.liftMotor.setPower(-1.0);
+        if(gamepad2.dpad_up) {
+            robot.latchLift.liftUp();
+        } else if (gamepad2.dpad_down){
+            robot.latchLift.liftDown();
+        } else if (gamepad2.dpad_right){
+            robot.latchLift.liftStop();
         }
 
         /*if(gamepad1.a){
@@ -53,13 +55,13 @@ public class BasicTeleop extends OpMode {
             robot.latchLift.liftServo.setPower(-1.0);
         }
         */
-        //For team marker
+        /*For team marker
         if(gamepad1.dpad_up){
             robot.output.holdMarker();
         } else if (gamepad1.dpad_down){
             robot.output.dropMarker();
         }
-
+*/
         //Telemetry
         robot.telemetry.addData("RightY", "LeftStick:&7f", gamepad1.right_stick_y);
 

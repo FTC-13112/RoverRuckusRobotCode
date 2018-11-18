@@ -36,4 +36,17 @@ public class Robot {
     public boolean isRunningAutonomous() {
         return currentOpMode != null;
     }
+
+    public double boundValue(double upperBounds, double lowerBounds, double value) {
+        if (value > upperBounds)
+            return upperBounds;
+        else if (value < lowerBounds)
+            return lowerBounds;
+        else
+            return value;
+    }
+
+    public boolean valueInRange(double target, double debounce, double value) {
+        return value >= (target - debounce) && value <= (target + debounce);
+    }
 }

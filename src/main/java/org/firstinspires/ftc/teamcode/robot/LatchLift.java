@@ -27,4 +27,13 @@ public class LatchLift {
         liftServo.setDirection(CRServo.Direction.FORWARD);
 
     }
+    public void liftUp(){
+        liftMotor.setPower(1.0);
+    }
+    public void liftDown(){
+        liftMotor.setPower(-1.0);
+    }
+    public void liftStop(){
+        liftMotor.setPower(0.0);
+    }
 }
