@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Servo;
-
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 /**
@@ -26,21 +24,24 @@ public class BasicTeleop extends OpMode {
     public void loop() {
 
         //For Intake Motor
-        if (gamepad2.left_bumper) {
+
+        if (gamepad1.left_bumper) {
             robot.intake.infeed();
 
-        } else if (gamepad2.right_bumper) {
+        } else if (gamepad1.right_bumper) {
             robot.intake.outfeed();
 
-        } else if (gamepad2.b){
+        } else if (gamepad1.b){
             robot.intake.stopIntake();
         }
+
 
         //For Drivetrain motors
         robot.driveTrain.leftDrive.setPower(gamepad1.left_stick_y);
         robot.driveTrain.rightDrive.setPower(gamepad1.right_stick_y);
 
         //For Lift motors
+
         if(gamepad2.dpad_up) {
             robot.latchLift.liftUp();
         } else if (gamepad2.dpad_down){
@@ -49,19 +50,29 @@ public class BasicTeleop extends OpMode {
             robot.latchLift.liftStop();
         }
 
-        /*if(gamepad1.a){
-            robot.latchLift.liftServo.setPower(1.0);
-        } else if (gamepad1.b){
-            robot.latchLift.liftServo.setPower(-1.0);
+        if(gamepad2.left_bumper) {
+            robot.latchLift.liftMotor.setPower(0.25);
+        } else if(gamepad2.right_bumper){
+            robot.latchLift.liftMotor.setPower(-0.25);
+        } else if (gamepad2.x){
+            robot.latchLift.liftMotor.setPower(0.0);
         }
-        */
-        /*For team marker
+
+
+        if(gamepad2.a){
+            robot.latchLift.liftServo.setPosition(1.0);
+        } else if (gamepad2.b){
+            robot.latchLift.liftServo.setPosition(0.0);
+        }
+
+
+        //For team marker
         if(gamepad1.dpad_up){
             robot.output.holdMarker();
         } else if (gamepad1.dpad_down){
             robot.output.dropMarker();
         }
-*/
+
         //Telemetry
         robot.telemetry.addData("RightY", "LeftStick:&7f", gamepad1.right_stick_y);
 

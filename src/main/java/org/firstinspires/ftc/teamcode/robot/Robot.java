@@ -37,6 +37,12 @@ public class Robot {
         return currentOpMode != null;
     }
 
+    public boolean opModeIsActive() {
+        if (isRunningAutonomous()) {
+            return currentOpMode.opModeIsActive();
+        }
+        return true;
+    }
     public double boundValue(double upperBounds, double lowerBounds, double value) {
         if (value > upperBounds)
             return upperBounds;
