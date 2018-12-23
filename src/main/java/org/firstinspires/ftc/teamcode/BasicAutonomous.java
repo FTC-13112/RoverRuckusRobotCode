@@ -23,6 +23,6 @@ public class BasicAutonomous extends LinearOpMode {
         //robot.driveTrain.driveForwardEncoder(48.0, 0.5, 10.0);
         //robot.output.dropMarker();
         //robot.output.holdMarker();
-        robot.driveTrain.gyroTurnKavin(90, 10.0);
+        robot.driveTrain.gyroTurnByAngle(90, 10.0);
     }
 }
