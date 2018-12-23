@@ -9,11 +9,11 @@ import org.firstinspires.ftc.teamcode.robot.MineralLocation;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 /**
- * Created by Dravid-C on 11/18/2018.
- */
-@Autonomous(name = "blue_depot")
-public class BlueDepot extends LinearOpMode {
+ * Created by Dravid-C on 12/16/2018.
 
+ */
+@Autonomous(name = "blue_crater")
+public class BlueCrater extends LinearOpMode {
     private Robot robot = null;
     private MineralLocation goldMineralLocation;
     private double startingHeading;
@@ -37,6 +37,7 @@ public class BlueDepot extends LinearOpMode {
         claimDepot();
 
         parkInCrater();
+
     }
 
     private void initialize() {
@@ -61,15 +62,15 @@ public class BlueDepot extends LinearOpMode {
         });
 
         telemetry.addLine()
-            .addData("telemetry state", new Func<String>() {
-                @Override
-                public String value() {
-                    return Integer.toString(telemetryState);
-                }
-            });
+                .addData("telemetry state", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return Integer.toString(telemetryState);
+                    }
+                });
 
         //if(telemetryState == 0) {
-            telemetry.addLine()
+        telemetry.addLine()
                 .addData("pixy X voltage", new Func<String>() {
                     @Override
                     public String value() {
@@ -77,7 +78,7 @@ public class BlueDepot extends LinearOpMode {
                     }
                 });
 
-            telemetry.addLine()
+        telemetry.addLine()
                 .addData("pixy marker visible", new Func<String>() {
                     @Override
                     public String value() {
@@ -98,12 +99,8 @@ public class BlueDepot extends LinearOpMode {
                         return Double.toString(targetAngle);
                     }
                 });
-        //} else if (telemetryState == 1){
-
-        //} else if (telemetryState == 2){
-
-        //} else if (telemetryState == 3) {}
     }
+
     private void landRobot(){
         // Begin lowering sequence, robot must raise before lift can be unlocked
 
@@ -136,9 +133,15 @@ public class BlueDepot extends LinearOpMode {
 
         // Drive to the gold mineral
         if (goldMineralLocation == MineralLocation.MIDDLE) {
-            robot.driveTrain.driveForwardEncoder(Constants.DISTANCE_TO_MIDDLE_MINERAL, 0.4, 5.0);
+            robot.driveTrain.driveForwardEncoder(Constants.CRATER_DISTANCE_TO_MIDDLE_MINERAL, 0.4, 5.0);
         } else {
-            robot.driveTrain.driveForwardEncoder(Constants.DISTANCE_TO_OUTER_MINERALS, 0.5, 5.0);
+            robot.driveTrain.driveForwardEncoder(Constants.CRATER_DISTANCE_TO_OUTER_MINERALS, 0.5, 5.0);
+        }
+
+        if(goldMineralLocation == MineralLocation.MIDDLE){
+            robot.driveTrain.driveBackwardEncoder(Constants.DISTANCE_CRATER_REVERSE_MIDDLE, 0.4, 5.0);
+        } else {
+            robot.driveTrain.driveBackwardEncoder(Constants.DISTANCE_CRATER_REVERSE_OUTER ,0.4  ,5.0  );
         }
 
         //Pick up gold mineral and return to pre picked position
@@ -152,36 +155,33 @@ public class BlueDepot extends LinearOpMode {
         robot.intake.stopIntake();
 
     }
-
-
     private void claimDepot(){
         //Drive into depot
+        robot.driveTrain.gyroTurnToHeading(robot.sensors.addToHeading(startingHeading, 90), 5.0);
 
-        if(goldMineralLocation == MineralLocation.MIDDLE){
-            robot.driveTrain.driveForwardEncoder(Constants.DISTANCE_FROM_MIDDLE_TO_DEPOT, 0.25, 5.0);
-        } else {
-            currentHeading = robot.sensors.getHeading();
-            targetAngle = robot.sensors.addToHeading(2 * (currentHeading-startingHeading ));
-            robot.driveTrain.gyroTurnToHeading(targetAngle, 5.0);
-            robot.driveTrain.driveForwardEncoder(Constants.DISTANCE_FROM_OUTER_TO_DEPOT, 0.25, 999.0);
+        robot.driveTrain.driveTillDistanceLessThanValue(25.0, -0.5, 5.0);
 
-        }
-        robot.driveTrain.gyroTurnToHeading(robot.sensors.addToHeading(startingHeading, 90),5.0);
+        robot.driveTrain.gyroTurnToHeading(robot.sensors.addToHeading(startingHeading, 55), 5.0);
+
+        robot.driveTrain.driveTillDistanceLessThanValue(30, -0.7, 5.0);
+
+        robot.driveTrain.gyroTurnToHeading(startingHeading,5.0);
 
         //Drop marker
         robot.output.dropMarker();
         robot.output.holdMarker();
     }
 
-        private void parkInCrater(){
-            //Turn to face crater
-            double targetHeading = robot.sensors.addToHeading(startingHeading, Constants.ANGLE_BLUE_DEPOT_TO_BLUE_CRATER);
-            robot.driveTrain.gyroTurnToHeading(targetHeading, 5.0);
+    private void parkInCrater(){
+        //Turn to face crater
+        double targetHeading = robot.sensors.addToHeading(startingHeading, Constants.ANGLE_BLUE_CRATER_TO_BLUE_CRATER);
+        robot.driveTrain.gyroTurnToHeading(targetHeading, 5.0);
 
-            //Drive to crater
-            //robot.driveTrain.driveForwardEncoder(Constants.DISTANCE_FROM_DEPOT_TO_CRATER, 0.5, 10.0);
-            robot.driveTrain.driveForwardUntilTilted(0.5, 10.0);
-        }
+        //Drive to crater
+        //robot.driveTrain.driveForwardEncoder(Constants.DISTANCE_FROM_DEPOT_TO_CRATER, 0.5, 10.0);
+        robot.driveTrain.driveForwardUntilTilted(0.5, 10.0);
+    }
+
 
 
 }

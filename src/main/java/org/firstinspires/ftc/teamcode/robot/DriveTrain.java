@@ -214,11 +214,38 @@ public class DriveTrain {
 
         while (robot.opModeIsActive() &&
                 (runtime.seconds() < timeoutSec) &&
-                (runtime.seconds() < 3 || !robot.sensors.robotIsTilted())) {
+                (runtime.seconds() < 1.5 || !robot.sensors.robotIsTilted())) {
         }
 
         leftDrive.setPower(0);
         rightDrive.setPower(0);
 
     }
+
+    public void driveTillDistanceLessThanValue(double distance, double power, double timeoutSec){
+        if (INVERT_DIRECTION_SIGN) {
+            power = -power;
+        }
+
+        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        runtime.reset();
+
+        while (robot.sensors.getDistanceCM() > distance &&
+                runtime.seconds() < timeoutSec &&
+                robot.opModeIsActive()){
+            leftDrive.setPower(power);
+            rightDrive.setPower(power);
+
+        }
+
+        leftDrive.setPower(0.0);
+        rightDrive.setPower(0.0);
+
+    }
+
+
 }
